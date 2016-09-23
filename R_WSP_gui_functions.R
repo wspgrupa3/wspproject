@@ -5,7 +5,7 @@ get_file <- function(h, ...){
   return();
 }
 
-process_file <- function(h, ...){
+preprocess_CEL_data <- function(h, ...){
   dfd = get('data_file_dir', envir = .GlobalEnv);
   setwd(dirname(dfd));
   es_tmp = get_expset(dfd);
@@ -13,6 +13,26 @@ process_file <- function(h, ...){
   assign('exp_set', es_tmp, .GlobalEnv);
   assign('clusters', es_clust, .GlobalEnv);
   setwd('..');
+  return();
+}
+
+create_tools <- function(h, ...){
+  user_choice = svalue(analysis_radio);
+  if(exists("an_settings", envir = .GlobalEnv)){
+    delete(settings_container, an_settings);
+  }
+  an_settings = gframe(text = "Analysis Settings", container = settings_container);
+  assign('an_settings', an_settings, .GlobalEnv);
+  if(user_choice == "Genes Diference"){
+    glabel(text = "FC", container = an_settings);
+    pval_slider = gslider(from = 0.01, to = 0.1, by = 0.01, value = 0.05, container = an_settings);
+    glabel(text = "p-val threshold", container = an_settings);
+    FC_slider = gslider(from = -7, to = 7, by = 0.5, value = 0, container = an_settings);
+  }else if(user_choice == "PCA"){
+    glabel("Number of clusters", container = an_settings);
+    clnum_slider = gslider(from = 2, to = 10, by = 1, value = 3, container = an_settings);
+  }
+  #add(an_settings, settings_container);
   return();
 }
 
