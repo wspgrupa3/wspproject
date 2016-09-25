@@ -1,9 +1,13 @@
-Klasteryzacja<- function(expset, nrKl){
+Klasteryzacja<- function(expset, nrKl, folder_path){
   
   
   # Magdalena Szeremet
   # Funkcja skaluje dane mikromacierzowe, przeprowadza PCA i klasteryzuje metod? k-means i metod? hierarchiczn?.
   
+  ### SET THIS FOR DATA MAX CAP ###
+  max_cols = 4;
+  max_genes = 10;
+  #################################
   library('Biobase')
   library('BiocGenerics')
   library('parallel')
@@ -12,8 +16,9 @@ Klasteryzacja<- function(expset, nrKl){
   
   Dane=exprs(expset)
   
-  #X=Dane
-  X=Dane[1:100,1:100] # Obliczenia d?ugo trwaj? dla ca?o?ci, wi?c bior? tylko cz??? danych aby pokaza? jak to dzia?a. 
+  data_size = dim(Dane);
+  last_col = min(max_cols, data_size[2]);
+  X=Dane[1:max_genes,1:last_col]; # Obliczenia d?ugo trwaj? dla ca?o?ci, wi?c bior? tylko cz??? danych aby pokaza? jak to dzia?a. 
   
   # Wprowadzenie danych
   # Sprawdzimy wp?yw skalowania danych na wyniki analizy
@@ -37,7 +42,7 @@ Klasteryzacja<- function(expset, nrKl){
   # Wykonanie 6 obrazk?w na 1 okienku wymaga zmiany parametr?w rysowania.
   oldpar=par(no.readonly=TRUE)
   
-  di = get('plot_device_id', envir = .GlobalEnv);
+  di = get('plot_device_1', envir = .GlobalEnv);
   dev.set(di);
   par(las=1, mfcol=c(3,2), oma=c(0,0,1,0))
   klasy=kmeans(X, nrKl)$cluster
@@ -48,12 +53,16 @@ Klasteryzacja<- function(expset, nrKl){
   plot(sa2[,1],sa2[,2],main="scaled data",   col=klasy)
   plot(sa3[,1],sa3[,2],main="log data",      col=klasy)
   title("True classes",outer=TRUE)
+  dev.copy(png, file.path(folder_path, 'True_classes.png'));
+  dev.off();
   
   # Podzia? dany przez klasteryzacj? metod? k-?rednich
   klasy= kmeans(X, nrKl)$cluster
   klasy2=kmeans(X2,nrKl)$cluster
   klasy3=kmeans(X3,nrKl)$cluster;
-  x11(); par(las=1, mfcol=c(3,2), oma=c(0,0,1,0))
+  di = get('plot_device_2', envir = .GlobalEnv);
+  dev.set(di);
+  par(las=1, mfcol=c(3,2), oma=c(0,0,1,0))
   plot(pca$x[,1], pca$x[,2], main="original data", col=klasy)
   plot(pca2$x[,1],pca2$x[,2],main="scaled data",   col=klasy2)
   plot(pca3$x[,1],pca3$x[,2],main="log data",      col=klasy3)
@@ -61,12 +70,16 @@ Klasteryzacja<- function(expset, nrKl){
   plot(sa2[,1],sa2[,2],main="scaled data",   col=klasy2)
   plot(sa3[,1],sa3[,2],main="log data",      col=klasy3)
   title("K-means",outer=TRUE)
+  dev.copy(png, file.path(folder_path, 'k_means.png'));
+  dev.off();
   
   # Podzia? dany przez aglomeracyjn? klasteryzacj? hierarchiczn?
   hcl= hclust(dist(X));   klasy = as.vector(cutree(hcl,nrKl))
   hcl2=hclust(dist(X2)); klasy2 = as.vector(cutree(hcl2,nrKl))
   hcl3=hclust(dist(X3)); klasy3 = as.vector(cutree(hcl3,nrKl))
-  x11(); par(las=1, mfcol=c(3,2), oma=c(0,0,1,0))
+  
+  png(file.path(folder_path, 'Hierarch_clust.png'));
+  par(las=1, mfcol=c(3,2), oma=c(0,0,1,0))
   plot(pca$x[,1], pca$x[,2], main="original data", col=klasy)
   plot(pca2$x[,1],pca2$x[,2],main="scaled data",   col=klasy2)
   plot(pca3$x[,1],pca3$x[,2],main="log data",      col=klasy3)
@@ -74,9 +87,11 @@ Klasteryzacja<- function(expset, nrKl){
   plot(sa2[,1],sa2[,2],main="scaled data",   col=klasy2)
   plot(sa3[,1],sa3[,2],main="log data",      col=klasy3)
   title("Hierarch clust",outer=TRUE)
+  dev.off();
   
+  png(file.path(folder_path, 'hcl_dendrogram.png'));
   par(oldpar)
-  
-  x11(); plot(hcl) # dendrogram
+  plot(hcl) # dendrogram
+  dev.off();
 
 }

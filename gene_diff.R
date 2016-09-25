@@ -1,6 +1,10 @@
 ### POR?WNANIE DANYCH METODAMI STATYSTYCZNYMI
 
-gene_diff <- function(dane1,dane2,thr,thr2) { # dane1- dane ekspresji po normalizacja dla grupy 1; dane2- dane ekspresji po normalizacja dla grupy 2, thr - pr?g dla p-warto?ci, thr2 - pr?g dla FC (niezlogarytmowanego)
+#Joanna Tobiasz
+
+library("ggplot2")
+
+gene_diff <- function(dane1,dane2,thr,thr2, folder_path) { # dane1- dane ekspresji po normalizacja dla grupy 1; dane2- dane ekspresji po normalizacja dla grupy 2, thr - pr?g dla p-warto?ci, thr2 - pr?g dla FC (niezlogarytmowanego)
   ## SPRAWDZENIE NORMALNO?CI ROZK?ADU DANYCH (Test Lillieforsa)
   # Grupa 1:
   pLil1=matrix(data=NA,nrow=nrow(dane1),ncol=1)
@@ -103,11 +107,14 @@ gene_diff <- function(dane1,dane2,thr,thr2) { # dane1- dane ekspresji po normali
     j=j+1;
   }
   # Wykres dystrybuanty
+  di = get('plot_device_1', envir = .GlobalEnv);
+  dev.set(di);
   plot(wek,il.pval,type="l", col='violet', axes=T, ann=T,
        main='Wykres liczby gen?w o p-warto?ci mniejszej ni? poszczeg?lne warto?ci',
        xlab="p-warto??",
        ylab="Liczba gen?w", cex.lab=0.8, lwd=2)
-  
+  dev.copy(png, file.path(folder_path, 'gene_diff_cdf.png'));
+  dev.off();
   ### GENY RӯNICUJ?CE
   ## GENY O NAJNI?SZEJ p-WARTO?CI
   #thr=.2 # warto?? progu
@@ -140,6 +147,8 @@ gene_diff <- function(dane1,dane2,thr,thr2) { # dane1- dane ekspresji po normali
   gene_list=data.frame(FC,pval)
   gene_list$threshold = as.factor((abs(gene_list$FC)>(thr2)) & (gene_list$pval < thr))
   
+  di = get('plot_device_2', envir = .GlobalEnv);
+  dev.set(di);
   ggplot(data=gene_list, aes(x=FC, y=-log10(pval),colour=threshold)) +
     geom_point(alpha=0.4, size=1.75) +
     theme(legend.position = "none") +
@@ -147,7 +156,8 @@ gene_diff <- function(dane1,dane2,thr,thr2) { # dane1- dane ekspresji po normali
     xlab("fold change") + ylab("-log10 p-value")+
     ggtitle("Volcano plot") + 
     theme(plot.title = element_text(lineheight=.8, face="bold"))
-  
+  dev.copy(png, file.path(folder_path, 'gene_diff_volcano.png'));
+  dev.off();
   
   ### SORTOWANIE W ZALE?NO?CI OD FC
   FCzm.sort=sort(changes3[,1],decreasing=FALSE,index.return=TRUE)
@@ -156,7 +166,7 @@ gene_diff <- function(dane1,dane2,thr,thr2) { # dane1- dane ekspresji po normali
   FCchanges.sort=FCzm.sort$x
   zm.sort=cbind(FCchanges.sort,pvalzm.sort)
   # Zapisanie do pliku
-  write(row.names(zm.sort),file="Geny_roznicujace.txt")
+  write(row.names(zm.sort),file=file.path(folder_path, "Geny_roznicujace.txt"));
   
   result<-list("expression1"=exp_dif1,"expression2"=exp_dif2)
   return (result)
