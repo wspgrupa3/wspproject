@@ -3,6 +3,7 @@
 #Joanna Tobiasz
 
 library("ggplot2")
+library("nortest")
 
 gene_diff <- function(dane1,dane2,thr,thr2, folder_path) { # dane1- dane ekspresji po normalizacja dla grupy 1; dane2- dane ekspresji po normalizacja dla grupy 2, thr - pr?g dla p-warto?ci, thr2 - pr?g dla FC (niezlogarytmowanego)
   ## SPRAWDZENIE NORMALNO?CI ROZK?ADU DANYCH (Test Lillieforsa)

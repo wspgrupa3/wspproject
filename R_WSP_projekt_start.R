@@ -1,3 +1,6 @@
+#Maciej Miga
+#Paulina Wojcik
+
 #install.packages("gWidgetsRGtk2", dep = TRUE)
 rm(list = ls());
 options(show.error.locations=TRUE);

@@ -1,3 +1,6 @@
+#Maciej Miga
+#Paulina Wojcik
+
 get_file <- function(h, ...){
   dir = file.choose();
   svalue(h$action) = dir;
