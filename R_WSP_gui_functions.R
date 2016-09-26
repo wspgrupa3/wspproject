@@ -43,7 +43,7 @@ create_tools <- function(h, ...){
     setlist = list(pval_slider, FC_slider);
     names(setlist) = c('pval', 'fc');
     assign('settings_list', setlist, envir = .GlobalEnv);
-  }else if(user_choice == "Clustering"){
+  }else if(user_choice == "Scaled clustering"){
     glabel("Number of clusters", container = an_settings);
     clnum_slider = gslider(from = 2, to = 10, by = 1, value = 3, container = an_settings);
     setlist = list(clnum_slider);
@@ -73,11 +73,13 @@ create_tools <- function(h, ...){
       em2 = em[,-(1:half)];
       diff = gene_diff(em1, em2, svalue(pval_slider), svalue(FC_slider), svalue(outdir_edit));
       assign('f_res', diff, .GlobalEnv);
-    }else if(user_choice == "Clustering"){
+    }else if(user_choice == "Scaled clustering"){
       Klasteryzacja(exp_set, svalue(clnum_slider), svalue(outdir_edit));
-    }else if(user_choice == "Clustering 2"){
+    }else if(user_choice == "Clustering"){
       clusters = klast(exp_set, svalue(outdir_edit));
       assing('f_res', clusters, .GlobalEnv);
+    }else if(user_choice == "Graphical analysis"){
+      graficzne(exp_set, folder_path);
     }
   }
   addHandlerClicked(run_button, handler = run_analysis);

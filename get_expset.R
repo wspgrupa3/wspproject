@@ -1,4 +1,6 @@
 get_expset = function(filename){#data file
+  
+#Marta Zarebska
   library('affy')
   library('Biobase')
   library('hgu95av2.db')

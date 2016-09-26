@@ -14,10 +14,10 @@ set_wd_click <- function(h, ...){#loading files and GUI when wd known
       setwd(user_wd);
       source("R_WSP_gui_functions.R");#ok
       source("get_expset.R");#ok
-      source("gene_diff.R");#lille error
+      source("gene_diff.R");#ok
       source("Klasteryzacja_MS.R");#ok
       source("klasteryzacja.R");#error commented out; no output
-      source("klas_hier.R");#?
+      source("graficzne.R");#ok
       addHandlerClicked(wd_select_file_button, handler = get_file, action = selfile_label);
       addHandlerClicked(process_raw_dat_button, handler = preprocess_CEL_data);
       addHandlerClicked(analysis_pick_button, handler = create_tools);
@@ -42,7 +42,7 @@ add(wdf, wdfu);
 add(wdf, wdfd);
 process_raw_dat_button = gbutton("Preprocess dataset", container = wdf);
 asf = gframe(text = "Analysys options", container = side_container, horizontal = F);
-analysis_radio = gradio(c("Genes Difference", "Clustering", "Clustering 2", "PCA"), container = asf);
+analysis_radio = gradio(c("Genes Difference", "Clustering", "Scaled clustering", "Graphical analysis"), container = asf);
 analysis_pick_button = gbutton("Choose method", container = asf);
 settings_container = gframe(text = "Settings", horizontal = F, container = appwin);
 size(settings_container) = c(200,300);
